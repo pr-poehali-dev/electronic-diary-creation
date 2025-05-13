@@ -1,0 +1,102 @@
+
+import { useState } from "react";
+import { Outlet, NavLink } from "react-router-dom";
+import { 
+  Home, 
+  Calendar, 
+  GraduationCap, 
+  BookOpen, 
+  MessageSquare, 
+  Settings, 
+  User, 
+  Menu, 
+  X
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+const Layout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const navItems = [
+    { icon: Home, label: "Главная", path: "/" },
+    { icon: Calendar, label: "Расписание", path: "/schedule" },
+    { icon: GraduationCap, label: "Оценки", path: "/grades" },
+    { icon: BookOpen, label: "Задания", path: "/assignments" },
+    { icon: MessageSquare, label: "Сообщения", path: "/messages" },
+  ];
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
+        <div className="container mx-auto px-4 flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleSidebar}
+              className="mr-2 md:hidden"
+            >
+              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </Button>
+            <h1 className="font-montserrat font-bold text-blue-600 text-xl">Электронный дневник</h1>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon">
+              <Settings size={20} />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <User size={20} />
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside 
+          className={cn(
+            "bg-white border-r border-gray-200 w-64 shrink-0 fixed md:static top-16 bottom-0 transition-transform z-10",
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          )}
+        >
+          <nav className="p-4 space-y-1">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors",
+                  isActive && "bg-blue-50 text-blue-600 font-medium"
+                )}
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                <item.icon size={20} />
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Main content */}
+        <main 
+          className={cn(
+            "flex-1 overflow-auto p-4 transition-all",
+            isSidebarOpen && "md:ml-0"
+          )}
+        >
+          <div className="container mx-auto">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default Layout;
