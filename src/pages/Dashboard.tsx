@@ -2,8 +2,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import Icon from "@/components/ui/icon";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    const user = localStorage.getItem("currentUser");
+    if (user) {
+      setCurrentUser(JSON.parse(user));
+    }
+  }, []);
+
   // Данные об успеваемости (в реальном приложении будут приходить с сервера)
   const subjects = [
     { name: "Математика", grade: 4.8, attendance: 98, homeworkDone: 95 },
@@ -23,10 +33,13 @@ const Dashboard = () => {
     { date: "19 мая", title: "Экскурсия в музей", subject: "Окружающий мир" },
   ];
 
+  // Получаем имя ученика
+  const studentName = currentUser?.name?.split(" ")[1] || "ученик";
+
   return (
     <div className="animate-fade-in">
       <h1 className="text-2xl font-montserrat font-bold text-gray-800 mb-6">
-        Добро пожаловать, Максим!
+        Добро пожаловать, {studentName}!
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
